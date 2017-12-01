@@ -2,12 +2,13 @@
 
 namespace Entity;
 
+use Symfony\Component\Security\Core\User\UserInterface;
 /**
  * Description of User
  *
  * @author Etudiant
  */
-class User
+class User implements UserInterface
 {
 
     /**
@@ -104,6 +105,21 @@ class User
     public function setLastname($lastname)
     {
         $this->lastname = $lastname;
+    }
+
+    public function eraseCredentials()
+    {
+        $this->setPassword(NULL);
+    }
+
+    public function getRoles()
+    {
+        
+    }
+
+    public function getSalt()
+    {
+        
     }
 
 }

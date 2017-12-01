@@ -45,4 +45,20 @@ $app['pdo'] = function($app) {
             ));
 };
 
+$app->register(new Silex\Provider\SessionServiceProvider());
+
+$app->register(new Silex\Provider\SecurityServiceProvider(), array(
+    'security.firewalls' => [
+        'front' => array(
+            'pattern' => '^/',
+            'http' => true,
+            'anonymous' => true,
+            'users' => array(
+                // raw password is foo
+                'admin' => array('ROLE_ADMIN', '$2y$10$3i9/lVd8UOFIJ6PAMFt8gu3/r5g0qeCJvoSlLCsvMTythye19F77a'),
+            ),
+        )
+    ]
+));
+
 return $app;
