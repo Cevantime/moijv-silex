@@ -1,0 +1,15 @@
+{% extends "layout.html.twig" %}
+
+{% block content %}
+    <div class="section section-full-screen section-signup" style="background-image: url('{{ asset('img/city.jpg') }}'); background-size: cover; background-position: top center; min-height: 700px;">
+        <div class="container">
+            <div class="row">
+                <div class="col-md-4 col-md-offset-4">
+                    <div class="card card-signup">
+                        {{ form(form) }}
+                    </div>
+                </div>
+            </div>
+        </div>
+    </div>
+{% endblock %}

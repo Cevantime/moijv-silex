@@ -5,6 +5,7 @@ use Silex\Provider\AssetServiceProvider;
 use Silex\Provider\TwigServiceProvider;
 use Silex\Provider\ServiceControllerServiceProvider;
 use Silex\Provider\HttpFragmentServiceProvider;
+use Silex\Provider\FormServiceProvider;
 
 $app = new Application();
 $app->register(new ServiceControllerServiceProvider());
@@ -53,12 +54,30 @@ $app->register(new Silex\Provider\SecurityServiceProvider(), array(
             'pattern' => '^/',
             'http' => true,
             'anonymous' => true,
-            'users' => array(
-                // raw password is foo
-                'admin' => array('ROLE_ADMIN', '$2y$10$3i9/lVd8UOFIJ6PAMFt8gu3/r5g0qeCJvoSlLCsvMTythye19F77a'),
-            ),
+            'form' => array('login_path' => '/login', 'check_path' => '/login_check'),
+            'users' => function () use ($app) {
+                return $app['users.dao'];
+            }
         )
     ]
 ));
+        
+$app->register(new Silex\Provider\LocaleServiceProvider());
+$app->register(new Silex\Provider\TranslationServiceProvider(), array(
+    'locale_fallbacks' => array('fr'),
+    'translator.domains' => [
+        // http://sharemycode.fr/2yd
+        'messages' => [
+            'fr' => [
+                'The credentials were changed from another session.' => 'Les identifiants ont été changés dans une autre session.',
+                'The presented password cannot be empty.' => 'Le mot de passe ne peut pas être vide.',
+                'The presented password is invalid.' => 'Le mot de passe entré est invalide.',
+                'Bad credentials.' => 'Les identifiants sont incorrects'
+            ]
+        ]
+    ]
+));
+
+$app->register(new FormServiceProvider());
 
 return $app;

@@ -14,6 +14,24 @@ $app->get('/', function () use ($app) {
 ->bind('homepage')
 ;
 
+$app->get('/login', function(Request $request) use ($app) {
+    return $app['twig']->render('login.html.twig', array(
+        'error'         => $app['security.last_error']($request),
+        'last_username' => $app['session']->get('_security.last_username'),
+    ));
+});
+
+$app->match('/register', function() use ($app) {
+    $form = $app['form.factory']->createBuilder(\FormType\UserType::class)
+            ->getForm();
+    
+    $formView = $form->createView();
+    
+    return $app['twig']->render('register.html.twig', ['form' => $formView]);
+})
+->method('GET|POST')
+;
+
 $app->error(function (\Exception $e, Request $request, $code) use ($app) {
     if ($app['debug']) {
         return;

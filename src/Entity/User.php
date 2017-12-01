@@ -3,6 +3,7 @@
 namespace Entity;
 
 use Symfony\Component\Security\Core\User\UserInterface;
+
 /**
  * Description of User
  *
@@ -47,6 +48,18 @@ class User implements UserInterface
      */
     private $lastname;
 
+    /**
+     * List of the user's roles
+     * @var array
+     */
+    private $roles;
+
+    /**
+     * The salt used to encode the user's password
+     * @var string 
+     */
+    private $salt;
+
     public function getId()
     {
         return $this->id;
@@ -71,7 +84,7 @@ class User implements UserInterface
     {
         return $this->lastname;
     }
-    
+
     public function getPassword()
     {
         return $this->password;
@@ -114,12 +127,25 @@ class User implements UserInterface
 
     public function getRoles()
     {
-        
+        return $this->roles;
+    }
+
+    public function setRoles($roles)
+    {
+        if (is_string($roles)) {
+            $roles = explode('|', $roles);
+        }
+        $this->roles = $roles;
     }
 
     public function getSalt()
     {
-        
+        return $this->salt;
+    }
+
+    public function setSalt($salt)
+    {
+        $this->salt = $salt;
     }
 
 }
