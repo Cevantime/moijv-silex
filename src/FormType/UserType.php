@@ -9,6 +9,7 @@ use Symfony\Component\Validator\Constraints as Assert;
 use Symfony\Component\Form\Extension\Core\Type\EmailType;
 use Symfony\Component\Form\Extension\Core\Type\PasswordType;
 use Symfony\Component\OptionsResolver\OptionsResolver;
+use Symfony\Component\Form\Extension\Core\Type\SubmitType;
 /**
  * Description of UserType
  *
@@ -63,6 +64,7 @@ class UserType extends AbstractType
                 new Assert\IdenticalTo( ['value' => 'password' ])
             ]
         ])
+        ->add('submit', SubmitType::class)
         ;
     }
     

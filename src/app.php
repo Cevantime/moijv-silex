@@ -6,6 +6,7 @@ use Silex\Provider\TwigServiceProvider;
 use Silex\Provider\ServiceControllerServiceProvider;
 use Silex\Provider\HttpFragmentServiceProvider;
 use Silex\Provider\FormServiceProvider;
+use Silex\Provider\ValidatorServiceProvider;
 
 $app = new Application();
 $app->register(new ServiceControllerServiceProvider());
@@ -79,5 +80,6 @@ $app->register(new Silex\Provider\TranslationServiceProvider(), array(
 ));
 
 $app->register(new FormServiceProvider());
+$app->register(new ValidatorServiceProvider());
 
 return $app;
