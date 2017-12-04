@@ -43,6 +43,7 @@ $app->match('/register', function(Request $request) use ($app) {
         $user->setPassword($encodedPassword);
         
         $app['users.dao']->save($user);
+        
     }
     
     $formView = $form->createView();
