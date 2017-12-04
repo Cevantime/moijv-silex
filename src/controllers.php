@@ -21,9 +21,29 @@ $app->get('/login', function(Request $request) use ($app) {
     ));
 });
 
-$app->match('/register', function() use ($app) {
-    $form = $app['form.factory']->createBuilder(\FormType\UserType::class)
+$app->match('/register', function(Request $request) use ($app) {
+    $user = new \Entity\User();
+    
+    $form = $app['form.factory']->createBuilder(\FormType\UserType::class, $user)
             ->getForm();
+    
+    $form->handleRequest($request);
+    
+    if($form->isValid()) {
+        $user->setRoles('ROLE_USER');
+        
+        $salt = md5(time());
+        
+        $user->setSalt($salt);
+        
+        $encodedPassword = $app['security.encoder_factory']
+                ->getEncoder($user)
+                ->encodePassword($password, $user->getSalt());
+        
+        $user->setPassword($encodedPassword);
+        
+        $app['users.dao']->save($user);
+    }
     
     $formView = $form->createView();
     
