@@ -1,0 +1,31 @@
+{# login_admin.html.twig #}
+{% extends 'admin/layout_admin.html.twig' %}
+
+{% block content %}
+    <form class="form" method="POST" action="{{ path('admin_login_check') }}">
+        <div class="header header-primary text-center">
+            <h4>Sign In</h4>
+        </div>
+        <div class="content">
+            <div class="input-group">
+                
+                <div class="form-group is-empty"><input class="form-control" name="_username" value="{{ last_username }}" placeholder="Nom utilisateur..." type="text"><span class="material-input"></span></div>
+            </div>
+
+
+            <div class="input-group">
+                
+                <div class="form-group is-empty"><input placeholder="Mot de passe..." name="_password" value="" class="form-control" type="password"><span class="material-input"></span></div>
+            </div>
+
+        </div>
+        <div class="footer text-center">
+            {% if error %}
+                <div class="alert alert-danger">
+                    {{ error | trans }} {# <?php echo trans($error) ?> #}
+                </div>
+            {% endif %}
+            <button type="submit" class="btn btn-simple btn-primary btn-lg">Connexion</button>
+        </div>
+    </form>
+{% endblock %}

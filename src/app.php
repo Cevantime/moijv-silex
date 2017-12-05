@@ -7,8 +7,9 @@ use Silex\Provider\ServiceControllerServiceProvider;
 use Silex\Provider\HttpFragmentServiceProvider;
 use Silex\Provider\FormServiceProvider;
 use Silex\Provider\ValidatorServiceProvider;
+use App\CustomApp;
 
-$app = new Application();
+$app = new CustomApp();
 $app->register(new ServiceControllerServiceProvider());
 $app->register(new AssetServiceProvider());
 $app->register(new TwigServiceProvider());
@@ -51,6 +52,25 @@ $app->register(new Silex\Provider\SessionServiceProvider());
 
 $app->register(new Silex\Provider\SecurityServiceProvider(), array(
     'security.firewalls' => [
+        'admin' => array(
+            'pattern' => '^/admin/',
+            'form' => array(
+                'login_path' => '/loginadmin', 
+                'check_path' => '/admin/login_check',
+                'always_use_default_target_path' => true,
+                'default_target_path' => '/admin/dashboard'
+            ),
+//            'http' => true,
+            'anonymous' => false,
+            'logout' => array('logout_path' => '/admin/logoutadmin', 'invalidate_session' => true),
+            'users' => function () use ($app) {
+                return $app['admins.dao'];
+            },
+            //https://symfony.com/doc/current/security/form_login.html
+//            'form_login' => array(
+//                'default_target_path' => 'admin_dashboard',
+//            ),
+        ),
         'front' => array(
             'pattern' => '^/',
             'http' => true,
@@ -59,14 +79,6 @@ $app->register(new Silex\Provider\SecurityServiceProvider(), array(
             'logout' => array('logout_path' => '/logout', 'invalidate_session' => true),
             'users' => function () use ($app) {
                 return $app['users.dao'];
-            }
-        ),
-        'admin' => array(
-            'pattern' => '^/admin/',
-            'form' => array('login_path' => '/loginadmin', 'check_path' => '/admin/login_check'),
-            'http' => true,
-            'users' => function () use ($app) {
-                return $app['admins.dao'];
             }
         ),
     ]
