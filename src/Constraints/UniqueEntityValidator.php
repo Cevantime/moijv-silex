@@ -21,7 +21,9 @@ class UniqueEntityValidator extends ConstraintValidator
         $entity = $dao->findOne(["$field = ?" => $value]);
         
         if($entity){
-            $this->context->buildViolation($constraint->message)->addViolation();
+            $this->context->buildViolation($constraint->message)
+                ->setParameter('{{column}}', $field)
+                ->addViolation();
         }
     }
 

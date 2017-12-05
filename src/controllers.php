@@ -8,8 +8,26 @@ use Symfony\Component\HttpKernel\Exception\NotFoundHttpException;
 
 //Request::setTrustedProxies(array('127.0.0.1'));
 
+$app->before(function() use ($app) {
+    $token = $app['security.token_storage']->getToken();
+    
+    if($token){
+        $user = $token->getUser();
+    } else {
+        $user = null;
+    }
+    
+    if(is_string($user)){
+        $user = null;
+    }
+    
+    $app['user'] = $user;
+    
+});
+
 $app->get('/', function () use ($app) {
-    return $app['twig']->render('index.html.twig', array());
+    
+    return $app['twig']->render('index.html.twig');
 })
 ->bind('homepage')
 ;
@@ -19,7 +37,9 @@ $app->get('/login', function(Request $request) use ($app) {
         'error'         => $app['security.last_error']($request),
         'last_username' => $app['session']->get('_security.last_username'),
     ));
-});
+})
+->bind('login')
+;
 
 $app->match('/register', function(Request $request) use ($app) {
     $user = new \Entity\User();
@@ -30,19 +50,20 @@ $app->match('/register', function(Request $request) use ($app) {
     $form->handleRequest($request);
     
     if($form->isValid()) {
-        $user->setRoles('ROLE_USER');
+        $user->setRole('ROLE_USER');
         
         $salt = md5(time());
         
         $user->setSalt($salt);
-        
         $encodedPassword = $app['security.encoder_factory']
                 ->getEncoder($user)
-                ->encodePassword($password, $user->getSalt());
+                ->encodePassword($user->getPassword(), $user->getSalt());
         
         $user->setPassword($encodedPassword);
         
         $app['users.dao']->save($user);
+        
+        return $app->redirect($app['url_generator']->generate('login'));
     }
     
     $formView = $form->createView();
@@ -50,6 +71,7 @@ $app->match('/register', function(Request $request) use ($app) {
     return $app['twig']->render('register.html.twig', ['form' => $formView]);
 })
 ->method('GET|POST')
+->bind('register')
 ;
 
 $app->error(function (\Exception $e, Request $request, $code) use ($app) {
